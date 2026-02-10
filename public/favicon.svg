@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="blueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#2563eb;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="48" fill="url(#blueGradient)"/>
+
+  <!-- Pie chart segments in white -->
+  <g fill="white" opacity="0.95">
+    <!-- Segment 1 (top right) -->
+    <path d="M 50 50 L 50 10 A 35 35 0 0 1 77 35 Z" fill="white"/>
+
+    <!-- Segment 2 (bottom right) -->
+    <path d="M 50 50 L 77 35 A 35 35 0 0 1 70 73 Z" fill="white" opacity="0.8"/>
+
+    <!-- Segment 3 (left) -->
+    <path d="M 50 50 L 70 73 A 35 35 0 1 1 50 10 Z" fill="white" opacity="0.6"/>
+  </g>
+
+  <!-- Center dot -->
+  <circle cx="50" cy="50" r="5" fill="white"/>
+</svg>
