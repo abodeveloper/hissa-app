@@ -1,20 +1,20 @@
-import React, { useState, useMemo, useEffect } from "react";
 import {
+  Calculator,
+  Check,
+  Edit2,
+  Percent,
+  PieChart,
   Plus,
+  RefreshCcw,
+  Save,
+  Share2,
+  ShoppingBag,
+  Split,
   Trash2,
   Users,
-  Check,
-  Split,
-  Calculator,
-  Edit2,
-  RefreshCcw,
   X,
-  Save,
-  PieChart,
-  ShoppingBag,
-  Share2,
-  Percent,
 } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 
 // --- TYPES ---
 interface User {
@@ -366,7 +366,8 @@ export default function HissaApp() {
                 Hissa
               </h1>
               <p className="text-[9px] sm:text-[10px] text-slate-500 font-semibold uppercase tracking-wider mt-0.5">
-                Adolatli taqsimlash
+                {/* Adolatli taqsimlash */}
+                Hisobli do'st ayrilmas !!!
               </p>
             </div>
           </div>
