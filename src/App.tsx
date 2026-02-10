@@ -1,4 +1,4 @@
-import HissaApp from "./my-components/BillSplitter";
+import HissaApp from "./components/BillSplitter";
 
 function App() {
   

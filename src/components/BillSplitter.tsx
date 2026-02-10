@@ -103,7 +103,7 @@ export default function HissaApp() {
   const shareReceipt = () => {
     // Chek matnini yaratish
     let text = `📊 *HISSA - Hisob-kitob cheki*\n`;
-    text += `📅 ${new Date().toISOString().slice(0, 16).replace('T', ' ')}\n\n`;
+    text += `📅 ${new Date().toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}\n\n`;
 
     users.forEach((u) => {
       const total = results.userTotals[u.id];
@@ -711,7 +711,7 @@ export default function HissaApp() {
                     </div>
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-slate-300 pt-2 border-t border-white/10">
-                    <span>{new Date().toISOString().slice(0, 16).replace('T', ' ')}</span>
+                    <span>{new Date().toLocaleString('uz-UZ', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                   </div>
                 </div>
               </div>
