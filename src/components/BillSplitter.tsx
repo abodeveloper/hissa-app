@@ -1,6 +1,7 @@
 import {
   Calculator,
   Check,
+  CreditCard,
   Edit2,
   Percent,
   PieChart,
@@ -33,6 +34,19 @@ interface Item {
   details: Record<string, number>;
 }
 
+const MAX_CARD_DIGITS = 19;
+
+function cardDigitsOnly(value: string): string {
+  return value.replace(/\D/g, "").slice(0, MAX_CARD_DIGITS);
+}
+
+/** Har 4 ta raqamdan keyin bo'shliq (masalan: 8600 1234 5678 9012) */
+function formatCardGroups(value: string): string {
+  const d = cardDigitsOnly(value);
+  if (!d) return "";
+  return d.match(/.{1,4}/g)?.join(" ") ?? d;
+}
+
 // --- COMPONENT ---
 export default function HissaApp() {
   // STATE
@@ -56,12 +70,16 @@ export default function HissaApp() {
   // Edit mode state
   const [editingId, setEditingId] = useState<string | null>(null);
 
+  /** To'lov uchun karta (chekni ulashganda matn oxirida chiqadi) */
+  const [cardNumber, setCardNumber] = useState("");
+
   // --- LOCAL STORAGE: 1. YUKLASH (LOAD) ---
   useEffect(() => {
     // Bu faqat bir marta, sahifa ochilganda ishlaydi
     const savedUsers = localStorage.getItem("hissa_users");
     const savedItems = localStorage.getItem("hissa_items");
     const savedService = localStorage.getItem("hissa_service");
+    const savedCard = localStorage.getItem("hissa_card");
 
     if (savedUsers) {
       try {
@@ -83,6 +101,10 @@ export default function HissaApp() {
       setServiceCharge(Number(savedService));
     }
 
+    if (savedCard) {
+      setCardNumber(formatCardGroups(savedCard));
+    }
+
     // Yuklash tugadi deb belgilaymiz
     setIsLoaded(true);
   }, []);
@@ -95,8 +117,14 @@ export default function HissaApp() {
       localStorage.setItem("hissa_users", JSON.stringify(users));
       localStorage.setItem("hissa_items", JSON.stringify(items));
       localStorage.setItem("hissa_service", serviceCharge.toString());
+      const cardFormatted = formatCardGroups(cardNumber);
+      if (cardFormatted) {
+        localStorage.setItem("hissa_card", cardFormatted);
+      } else {
+        localStorage.removeItem("hissa_card");
+      }
     }
-  }, [users, items, serviceCharge, isLoaded]);
+  }, [users, items, serviceCharge, cardNumber, isLoaded]);
 
   // --- ACTIONS ---
 
@@ -130,6 +158,12 @@ export default function HissaApp() {
     text += `🔧 Xizmat haqi: ${results.serviceAmt.toLocaleString()} so'm\n`;
     text += `💵 *UMUMIY: ${Math.round(results.grandTotal).toLocaleString()} so'm*\n\n`;
     text += `✅ Hisob avtomatik taqsimlandi`;
+
+    const card = formatCardGroups(cardNumber);
+    if (card) {
+      text += `\n\n━━━━━━━━━━━━━━━━━\n`;
+      text += `💳 *To'lov kartasi:*\n${card}`;
+    }
 
     // Share via Web Share API (agar mavjud bo'lsa)
     if (navigator.share) {
@@ -381,7 +415,7 @@ export default function HissaApp() {
         </div>
       </div>
 
-      <div className="max-w-5xl mx-auto p-3 sm:p-4 md:p-6 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mt-2">
+      <div className="max-w-5xl mx-auto py-3 px-3 sm:px-0 md:px-0 grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mt-2">
         {/* LEFT SIDE: INPUTS */}
         <div className="space-y-4 sm:space-y-6">
           {/* 1. USERS */}
@@ -824,6 +858,24 @@ export default function HissaApp() {
                   </div>
                 </div>
 
+                <div className="space-y-1.5">
+                  <label className="text-[9px] sm:text-[10px] font-bold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                    <CreditCard className="w-3 h-3 text-slate-400" />
+                    To'lov kartasi (ixtiyoriy)
+                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    autoComplete="off"
+                    placeholder="8600 1234 5678 9012"
+                    className="w-full border border-slate-200 bg-white rounded-lg px-3 py-2 text-xs sm:text-sm font-mono outline-none focus:ring-2 focus:ring-green-500/20 focus:border-green-500 transition placeholder:text-slate-400"
+                    value={cardNumber}
+                    onChange={(e) =>
+                      setCardNumber(formatCardGroups(e.target.value))
+                    }
+                  />
+                </div>
+
                 <button
                   onClick={shareReceipt}
                   className="w-full flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white py-2.5 rounded-lg font-semibold text-sm transition active:scale-95 shadow-sm"
@@ -831,6 +883,17 @@ export default function HissaApp() {
                   <Share2 className="w-4 h-4" />
                   Chekni ulashish
                 </button>
+
+                {formatCardGroups(cardNumber) ? (
+                  <div className="rounded-lg border border-dashed border-slate-200 bg-slate-50/80 px-3 py-2 text-center">
+                    <div className="text-[9px] font-semibold text-slate-400 uppercase tracking-wide mb-0.5">
+                      Chekda pastda chiqadi
+                    </div>
+                    <div className="font-mono text-xs sm:text-sm text-slate-700 break-all">
+                      {formatCardGroups(cardNumber)}
+                    </div>
+                  </div>
+                ) : null}
 
                 <div className="text-center text-[9px] text-slate-400 pt-1">
                   Avtomatik taqsimlandi
